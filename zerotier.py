@@ -71,16 +71,28 @@ def handle_widget(api_token):
 
 def handle_popup():
     if not os.path.exists(SNAPSHOT_PATH):
-        print("No data snapshot found.")
         return
     
     with open(SNAPSHOT_PATH, "r") as f:
         content = f.read()
     
-    cmd = f"env GTK_THEME=Adwaita:dark yad --text-info --title='ZeroTier Status' --width=800 --height=500 " \
-          f"--button='Close:0' --markup --wrap=0"
+    # Zenity is much more stable with the --font flag on Xubuntu
+    cmd = [
+        "zenity", "--text-info", 
+        "--title=ZeroTier Status", 
+        "--width=800", "--height=500", 
+        "--ok-label=Close", 
+        "--font=Monospace 10", 
+        "--no-wrap"
+    ]
     
-    os.system(f"echo \"<span font='Monospace 10'>{content}</span>\" | {cmd}")
+    import subprocess
+    env = os.environ.copy()
+    env["GTK_THEME"] = "Adwaita:dark"
+    
+    # This pipes the text directly into the Zenity window
+    process = subprocess.Popen(cmd, stdin=subprocess.PIPE, env=env, text=True)
+    process.communicate(input=content)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="ZeroTier XFCE Dashboard")
