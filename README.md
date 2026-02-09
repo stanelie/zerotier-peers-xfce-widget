@@ -5,11 +5,7 @@ Features
 
     Live Taskbar Stats: Shows Online / Total members directly in your panel.
 
-    Instant Detailed Popup: Click the widget to see Hostnames, Zerotier IPs, WAN IPs, and "Last Seen" times.
-
-    Dark Mode Support: Uses a forced GTK dark theme for a sleek look.
-
-    Zero-Latency UI: Uses data caching so the window pops up the millisecond you click it.
+    Detailed Popup: Click the widget to see Hostnames, Zerotier IPs, WAN IPs, and "Last Seen" times.
 
     Privacy-Focused: API tokens are passed via command line, not stored in the script.
 
