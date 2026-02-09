@@ -76,13 +76,17 @@ def handle_popup():
     with open(SNAPSHOT_PATH, "r") as f:
         content = f.read()
     
-    # Zenity is much more stable with the --font flag on Xubuntu
+    # We wrap the data in <tt> (Teletype/Monospace) tags.
+    # We also escape any '&' characters just in case, to prevent markup errors.
+    safe_content = content.replace("&", "&amp;")
+    styled_content = f"<tt>{safe_content}</tt>"
+    
+    # --info ONLY has an 'OK' button. It cannot show two buttons.
     cmd = [
-        "zenity", "--text-info", 
+        "zenity", "--info", 
         "--title=ZeroTier Status", 
         "--width=800", "--height=500", 
         "--ok-label=Close", 
-        "--font=Monospace 10", 
         "--no-wrap"
     ]
     
@@ -90,9 +94,11 @@ def handle_popup():
     env = os.environ.copy()
     env["GTK_THEME"] = "Adwaita:dark"
     
-    # This pipes the text directly into the Zenity window
-    process = subprocess.Popen(cmd, stdin=subprocess.PIPE, env=env, text=True)
-    process.communicate(input=content)
+    # Use the text=styled_content approach
+    # We add the text via argument because --info reads from --text
+    cmd.append(f"--text={styled_content}")
+    
+    subprocess.run(cmd, env=env)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="ZeroTier XFCE Dashboard")
